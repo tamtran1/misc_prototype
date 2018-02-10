@@ -1,0 +1,12 @@
+* temporarily disable selinux to change httpd document root directory
+  - use vim to edit /etc/sysconfig/selinux
+
+* httpd config located at
+  - /etc/httpd/conf/httpd.conf
+
+restart httpd service with: sudo service httpd restart
+
+#sed -i 's/SELINUX=.*/SELINUX=disabled/' /etc/sysconfig/selinux
+
+sudo sed -i 's/DocumentRoot .*/DocumentRoot "\/vagrant\/http"/' /etc/httpd/conf/httpd.conf
+sed -i 's/<Directory "\/var\/www">/<Directory "\/vagrant\/http">/' /etc/httpd/conf/httpd.conf
