@@ -1,0 +1,22 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+$script = <<SCRIPT	# define $script variable
+	# fetching essentials packages for cmake environment environment
+	yum -y install epel-release
+	yum -y update
+
+SCRIPT
+
+Vagrant.configure("2") do |config|
+	config.vm.provider :virtualbox do |vb|
+		vb.name = "bare_vagrant_env"
+		vb.memory = 16384
+		vb.cpus = 6
+	end
+	
+	config.vm.box = "centos/7"
+	config.vm.network "public_network"
+	config.vm.synced_folder ".", "/vagrant", type: "virtualbox"
+	config.vm.provision "shell", inline: $script
+end
