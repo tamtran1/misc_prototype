@@ -3,12 +3,10 @@
 
 $script = <<SCRIPT	# define $script variable
 	# fetching essentials packages for cmake environment environment
-	yum -y update
   yum -y install epel-release
-  yum -y install kernel-headers tree vim mlocate httpd
+  yum -y install httpd
 
 	chkconfig --levels 235 httpd on
-	sed -i 's/SELINUX=.*/SELINUX=disabled/' /etc/selinux/config
 	sed -i 's/DocumentRoot .*/DocumentRoot "\/vagrant\/http"/' /etc/httpd/conf/httpd.conf
 	sed -i 's/<Directory "\/var\/www">/<Directory "\/vagrant\/http">/' /etc/httpd/conf/httpd.conf
 
@@ -18,12 +16,11 @@ SCRIPT
 Vagrant.configure("2") do |config|
 	config.vm.provider :virtualbox do |vb|
 		vb.name = "drag_n_drop"
-		vb.memory = 16384
-		vb.cpus = 6
+		vb.memory = 4096
+		vb.cpus = 2
 	end
 	
-	config.vm.box = "centos/7"
-	config.vm.network "public_network"
-	config.vm.synced_folder ".", "/vagrant", type: "virtualbox"
+	config.vm.box = "centos7"
+	config.vm.network "private_network", type: "dhcp"
 	config.vm.provision "shell", inline: $script
 end

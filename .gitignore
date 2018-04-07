@@ -1,1 +1,5 @@
-.vagrant
+**/.vagrant
+packer/output-*
+packer/*.box
+packer/packer_cache
+.vscode

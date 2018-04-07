@@ -1,0 +1,15 @@
+{
+    "name": "centos7",
+    "description": "customize minimal centos 7 installation for virtual box with guest additions and insecure ssh key already installed",
+    "versions": [
+        {
+            "version": "0.0.1",
+            "providers": [
+                {
+                    "name": "virtualbox",
+                    "url": "packer_centos7_virtualbox.box"
+                }
+            ]
+        }
+    ]
+}
