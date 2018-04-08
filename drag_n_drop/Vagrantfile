@@ -6,11 +6,14 @@ $script = <<SCRIPT	# define $script variable
   yum -y install epel-release
   yum -y install httpd
 
-	chkconfig --levels 235 httpd on
-	sed -i 's/DocumentRoot .*/DocumentRoot "\/vagrant\/http"/' /etc/httpd/conf/httpd.conf
-	sed -i 's/<Directory "\/var\/www">/<Directory "\/vagrant\/http">/' /etc/httpd/conf/httpd.conf
+	# this configures apache to auto start on boot. not needed in vagrant environment
+	# due to shared folder being mounted after apache auto start causing apache start up failure 
+	# chkconfig --levels 235 httpd on
 
-	service httpd start
+	sed -i 's@DocumentRoot .*@DocumentRoot "/vagrant/http"@' /etc/httpd/conf/httpd.conf
+	sed -i 's@<Directory "/var/www">@<Directory "/vagrant/http">@' /etc/httpd/conf/httpd.conf
+
+	# service httpd start
 SCRIPT
 
 Vagrant.configure("2") do |config|
@@ -21,6 +24,7 @@ Vagrant.configure("2") do |config|
 	end
 	
 	config.vm.box = "centos7"
-	config.vm.network "private_network", type: "dhcp"
+	config.vm.network "private_network", ip: "192.168.2.2"
 	config.vm.provision "shell", inline: $script
+	config.vm.provision "shell", inline: "sudo service httpd start", run: "always"
 end
