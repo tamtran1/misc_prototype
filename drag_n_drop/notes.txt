@@ -10,3 +10,6 @@ restart httpd service with: sudo service httpd restart
 
 sudo sed -i 's/DocumentRoot .*/DocumentRoot "\/vagrant\/http"/' /etc/httpd/conf/httpd.conf
 sed -i 's/<Directory "\/var\/www">/<Directory "\/vagrant\/http">/' /etc/httpd/conf/httpd.conf
+
+resource:
+  https://css-tricks.com/drag-and-drop-file-uploading/

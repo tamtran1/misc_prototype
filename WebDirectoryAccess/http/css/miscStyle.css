@@ -1,0 +1,156 @@
+/* Chrome, Safari, Opera */
+@-webkit-keyframes shift-left {
+	0%   {left:10px; top:0px; opacity: 0;}
+	100% {left:0px; top:0px; opacity: 1;}
+}
+
+/* Standard syntax */
+@keyframes shift-left {
+	0%   {left:10px; top:0px; opacity: 0;}
+	100% {left:0px; top:0px; opacity: 1;}
+}
+
+/* Chrome, Safari, Opera */
+@-webkit-keyframes shift-right {
+	0%   {left:-10px; top:0px; opacity: 0;}
+	100% {left:0px; top:0px; opacity: 1;}
+}
+
+/* Standard syntax */
+@keyframes shift-right {
+	0%   {left:-10px; top:0px; opacity: 0;}
+	100% {left:0px; top:0px; opacity: 1;}
+}
+
+/* Chrome, Safari, Opera */
+@-webkit-keyframes shift-up {
+	0%   {left:0px; top:10px; opacity: 0;}
+	100% {left:0px; top:0px; opacity: 1;}
+}
+
+/* Standard syntax */
+@keyframes shift-up {
+	0%   {left:-10px; top:10px; opacity: 0;}
+	100% {left:0px; top:0px; opacity: 1;}
+}
+
+/* Chrome, Safari, Opera */
+@-webkit-keyframes fade-in {
+	0%   {opacity: 0;}
+	100% {opacity: 1;}
+}
+
+/* Standard syntax */
+@keyframes fade-in {
+	0%   {opacity: 0;}
+	100% {opacity: 1;}
+}
+
+.shiftLeft {
+    position: relative;
+    -webkit-animation-name: shift-left; /* Chrome, Safari, Opera */
+    -webkit-animation-duration: 1s; /* Chrome, Safari, Opera */
+    animation-name: shift-left;
+    animation-duration: 1s;
+}
+
+.shiftRight {
+    position: relative;
+    -webkit-animation-name: shift-right; /* Chrome, Safari, Opera */
+    -webkit-animation-duration: 1s; /* Chrome, Safari, Opera */
+    animation-name: shift-right;
+    animation-duration: 1s;
+}
+
+.shiftUp {
+    position: relative;
+    -webkit-animation-name: shift-up; /* Chrome, Safari, Opera */
+    -webkit-animation-duration: 1s; /* Chrome, Safari, Opera */
+    animation-name: shift-up;
+    animation-duration: 1s;
+}
+
+.fadeIn {
+    position: relative;
+    -webkit-animation-name: fade-in; /* Chrome, Safari, Opera */
+    -webkit-animation-duration: 1s; /* Chrome, Safari, Opera */
+    animation-name: fade-in;
+    animation-duration: 1s;
+}
+
+.breadcrumb { 
+	list-style: none; 
+	overflow: hidden; 
+	font: 18px Helvetica, Arial, Sans-Serif;
+}
+.breadcrumb li { 
+	float: left; 
+}
+.breadcrumb li a {
+	color: white;
+	text-decoration: none; 
+	padding: 0 0 0 23px;
+	background: #008CBA;                   /* fallback color */
+	background: hsla(195,100%,36%,1);
+	transition: background 300ms ease;
+	position: relative; 
+	display: block;
+	float: left;
+}
+.breadcrumb li a:after { 
+	content: " "; 
+	display: block; 
+	width: 0; 
+	height: 0;
+	border-top: 20px solid transparent;           /* Go big on the size, and let overflow hide */
+	border-bottom: 20px solid transparent;
+	border-left: 15px solid hsla(195,100%,36%,1);
+	transition: border 300ms ease;
+	position: absolute;
+	top: 50%;
+	margin-top: -20px; 
+	left: 100%;
+	z-index: 2; 
+}	
+.breadcrumb li a:before { 
+	content: " "; 
+	display: block; 
+	width: 0; 
+	height: 0;
+	border-top: 20px solid transparent;           /* Go big on the size, and let overflow hide */
+	border-bottom: 20px solid transparent;
+	border-left: 15px solid white;
+	position: absolute;
+	top: 50%;
+	margin-top: -20px; 
+	margin-left: 1px;
+	left: 100%;
+	z-index: 1; 
+}	
+.breadcrumb li:first-child a {
+	padding-left: 10px;
+}
+.breadcrumb li:nth-child(2) a       { background:        hsla(195,100%,40%,1); }
+.breadcrumb li:nth-child(2) a:after { border-left-color: hsla(195,100%,40%,1); }
+.breadcrumb li:nth-child(3) a       { background:        hsla(195,100%,45%,1); }
+.breadcrumb li:nth-child(3) a:after { border-left-color: hsla(195,100%,45%,1); }
+.breadcrumb li:nth-child(4) a       { background:        hsla(195,100%,48%,1); }
+.breadcrumb li:nth-child(4) a:after { border-left-color: hsla(195,100%,48%,1); }
+.breadcrumb li:nth-child(5) a       { background:        hsla(195,100%,56%,1); }
+.breadcrumb li:nth-child(5) a:after { border-left-color: hsla(195,100%,56%,1); }
+.breadcrumb li:nth-child(6) a       { background:        hsla(195,100%,70%,1); }
+.breadcrumb li:nth-child(6) a:after { border-left-color: hsla(195,100%,70%,1); }
+.breadcrumb li:last-child a {
+	background: white !important;
+	color: black;
+	pointer-events: none;
+	cursor: default;
+}
+.breadcrumb li:last-child a:after { border: 0; }
+.breadcrumb li a:hover { background: hsla(195,100%,29%,1); }
+.breadcrumb li a:hover:after { border-left-color: hsla(195,100%,29%,1) !important;}
+.log-in-form {
+	border: 1px solid #cacaca;
+	padding: 1rem;
+	border-radius: 3px;
+}

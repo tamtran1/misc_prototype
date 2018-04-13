@@ -1,0 +1,25 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+$script = <<SCRIPT	# define $script variable
+	# fetching essentials packages for cmake environment environment
+	yum -y install epel-release
+	yum -y install httpd php
+
+	sed -i 's@DocumentRoot .*@DocumentRoot "/vagrant/http"@' /etc/httpd/conf/httpd.conf
+	sed -i 's@<Directory "/var/www">@<Directory "/vagrant/http">@' /etc/httpd/conf/httpd.conf
+SCRIPT
+
+Vagrant.configure("2") do |config|
+	config.vm.provider :virtualbox do |vb|
+		vb.name = "web_directory_access"
+		vb.memory = 4096
+		vb.cpus = 2
+	end
+	
+	config.vm.box = "centos7"
+	# config.vm.network "private_network", ip: "192.168.2.2"
+	config.vm.network "public_network", type: "dhcp"
+	config.vm.provision "shell", inline: $script
+	config.vm.provision "shell", inline: "service httpd start", run: "always"
+end
