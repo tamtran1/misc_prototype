@@ -5,6 +5,7 @@
  ****************************************************************/
 #include <iostream>
 #include <vector>
+#include <fstream>
 
 #include "steganography/LSB_Manip.h"
 #include "steganography/Exception.h"
@@ -25,7 +26,7 @@ std::string get_arg(const std::vector<std::string> vec, int idx) {
 
 int main(int argc, char** argv) {
   std::string in_img;
-  std::string in_txt;
+  std::ifstream in_txt;
   std::string out_img;
   Steganography::Operation op(Steganography::Operation::noop);
 
@@ -34,7 +35,11 @@ int main(int argc, char** argv) {
 		if(argv_str[i] == "-i" || argv_str[i] == "--in-image") {
       in_img = get_arg(argv_str, ++i);
     } else if(argv_str[i] == "-t" || argv_str[i] == "--in-text") {
-      in_txt = get_arg(argv_str, ++i);
+      in_txt.open(get_arg(argv_str, ++i), std::ifstream::in);
+      if(!in_txt.is_open()) {
+        std::cerr << "ERROR: Can't open text file." << std::endl;
+        std::exit(1);
+      }
     } else if(argv_str[i] == "-o" || argv_str[i] == "--out-image") {
       out_img = get_arg(argv_str, ++i);
     } else if(argv_str[i] == "-e" || argv_str[i] == "--encode") {
@@ -53,14 +58,17 @@ int main(int argc, char** argv) {
 
   try {
     Steganography::LSB_Manip lm(in_img);
-
     switch(op) {
       case Steganography::Operation::encode: {
-        lm.encode(in_txt);
+        in_txt.seekg(0, in_txt.end);
+        int msg_len(in_txt.tellg());
+        std::cout << "message characers: " << msg_len << std::endl;
+        std::cout << "characters encoded: " << lm.encode(in_txt.seekg(0, in_txt.beg)) << std::endl;
         lm.write_img(out_img);
         break;
       } case Steganography::Operation::decode: {
-        std::cout << lm.decode();
+        std::cout << "characters decoded: " << lm.decode() << std::endl;
+        std::cout << lm;
         break;
       } case Steganography::Operation::strip: {
         std::cout << "stripping" << std::endl;
@@ -77,10 +85,4 @@ int main(int argc, char** argv) {
     std::cerr << e.what() << std::endl;
     std::exit(1);
   }
-
-  // lm.inject();
-
-  // lm.decode();
-
-  // lm.strip();
 }

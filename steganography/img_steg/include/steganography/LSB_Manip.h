@@ -9,6 +9,7 @@
 
 #include <string>
 #include <fstream>
+#include <vector>
 
 #include <opencv2/highgui.hpp>
 
@@ -17,16 +18,19 @@ namespace Steganography {
 enum class Operation {noop, encode, decode, strip};
 
 class LSB_Manip {
-  public:
-    LSB_Manip(const std::string& img_file);
+public:
+  LSB_Manip(const std::string& img_file);
+  int encode(std::istream& is);
+  int decode();
+  void strip();
+  void write_img(const std::string& out_img);
+  friend std::ostream& operator<<(std::ostream& os, const LSB_Manip& lm);
 
-    void encode(const std::string& txt_file);
-    std::string decode();
-    void strip();
-    void write_img(const std::string& out_img);
-
-  private:
-    cv::Mat _buf;
+private:
+  cv::Mat _img;
+  int _cap; // capacity of chars an image can hold
+  std::vector<char> _str{};
+    
 };
 
 
