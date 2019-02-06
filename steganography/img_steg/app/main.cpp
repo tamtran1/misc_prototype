@@ -71,7 +71,9 @@ int main(int argc, char** argv) {
         std::cout << lm;
         break;
       } case Steganography::Operation::strip: {
-        std::cout << "stripping" << std::endl;
+        int bytes(lm.strip());
+        lm.write_img(out_img);
+        std::cout << "Bytes processed: " << bytes << std::endl;
         break;
       } case Steganography::Operation::noop: {
         std::cout << "No operation specified. Nothing to do." << std::endl;
