@@ -19,15 +19,3 @@ target_include_directories(${LIBRARY_NAME} PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
   PRIVATE src)
-
-
-
-
-add_executable(encode src/encode.cpp)
-target_link_libraries(encode ${OpenCV_LIBS})
-
-add_executable(decode src/decode.cpp)
-target_link_libraries(decode ${OpenCV_LIBS})
-
-add_executable(tst src/test.cpp)
-target_link_libraries(tst ${OpenCV_LIBS})

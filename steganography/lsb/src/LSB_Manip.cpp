@@ -112,6 +112,9 @@ int LSB_Manip::strip() {
   });
 }
 
+/**
+ * Description: write a processed image out to disk
+ */
 void LSB_Manip::write_img(const std::string& out_img) {
   if(out_img.empty()) {
     throw Exception("ERROR: Output image file not specified");

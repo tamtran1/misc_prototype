@@ -16,8 +16,6 @@
 namespace Steganography {
 
 
-enum class Operation {noop, encode, decode, strip};
-
 /**
  * Description: use to pass temp data between _mtrx_wkr and lambda function
  */ 
