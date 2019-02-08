@@ -4,8 +4,8 @@
  * 
  ****************************************************************/
 
-#ifndef LSB_Manip_H
-#define LSB_Manip_H
+#ifndef LSB_H
+#define LSB_H
 
 #include <string>
 #include <fstream>
@@ -13,7 +13,7 @@
 
 #include <opencv2/highgui.hpp>
 
-namespace Steganography {
+namespace Lsb {
 
 
 /**
@@ -25,14 +25,14 @@ struct Mtrx_Wkr_Data {
   int nbytes; // number of bytes processed so far
 };
 
-class LSB_Manip {
+class Lsb {
 public:
-  LSB_Manip(const std::string& img_file);
+  Lsb(const std::string& img_file);
   int encode(std::istream& is);
   int decode();
   int strip();
   void write_img(const std::string& out_img);
-  friend std::ostream& operator<<(std::ostream& os, const LSB_Manip& lm);
+  friend std::ostream& operator<<(std::ostream& os, const Lsb& lm);
 
 private:
   cv::Mat _img;
@@ -43,6 +43,6 @@ private:
 };
 
 
-} // namespace Steganography
+} // namespace Lsb
 
-#endif // LSB_Manip_H
+#endif // LSB_H

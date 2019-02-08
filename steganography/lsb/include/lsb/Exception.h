@@ -4,12 +4,12 @@
 #include <string>
 #include <stdexcept>
 
-namespace Steganography {
+namespace Lsb {
 
 struct Exception : std::runtime_error {
   using std::runtime_error::runtime_error;
 };
 
-} // namespace Steganography
+} // namespace Lsb
 
 #endif // STEGANOGRAPHY_EXCEPTION_H

@@ -12,15 +12,15 @@
 
 #include <opencv2/highgui.hpp>
 
-#include "steganography/LSB_Manip.h"
-#include "steganography/Exception.h"
+#include "lsb/Lsb.h"
+#include "lsb/Exception.h"
 
-namespace Steganography {
+namespace Lsb {
 
 /**
  * Description: Constructor reads an input image into a cv::Mat buffer
  */ 
-LSB_Manip::LSB_Manip(const std::string& img_file): _img(cv::imread(img_file)), _cap((_img.total() * _img.elemSize()) / 8) {
+Lsb::Lsb(const std::string& img_file): _img(cv::imread(img_file)), _cap((_img.total() * _img.elemSize()) / 8) {
   if(_img.empty()) {
     throw Exception("ERROR: Can't read input image file.");
   }
@@ -34,7 +34,7 @@ LSB_Manip::LSB_Manip(const std::string& img_file): _img(cv::imread(img_file)), _
  * 
  * @return number of bytes encoded into image
  */
-int LSB_Manip::encode(std::istream& is) {
+int Lsb::encode(std::istream& is) {
   char c(is.get()); // temp char buffer to work on
 
   return _mtrx_wkr([&, this](Mtrx_Wkr_Data& dat, int color)->bool {
@@ -66,7 +66,7 @@ int LSB_Manip::encode(std::istream& is) {
  * 
  * @return: number of bytes decoded from image
  */
-int LSB_Manip::decode() {
+int Lsb::decode() {
   _str.resize(_cap, 0); // resize _str vector to _img max chars capacity and fill it with zeros
 
   return _mtrx_wkr([this](Mtrx_Wkr_Data& dat, int color)->bool {
@@ -94,7 +94,7 @@ int LSB_Manip::decode() {
  * 
  * @return: bytes processed
  */
-int LSB_Manip::strip() {
+int Lsb::strip() {
   std::cout << "Stripping least significant bit from image file." << std::endl;
   return _mtrx_wkr([this](Mtrx_Wkr_Data& dat, int color)->bool {
     dat.row[color] &= ~1; // set every pixels and its color channels lsb to zero
@@ -115,7 +115,7 @@ int LSB_Manip::strip() {
 /**
  * Description: write a processed image out to disk
  */
-void LSB_Manip::write_img(const std::string& out_img) {
+void Lsb::write_img(const std::string& out_img) {
   if(out_img.empty()) {
     throw Exception("ERROR: Output image file not specified");
   }
@@ -123,7 +123,7 @@ void LSB_Manip::write_img(const std::string& out_img) {
   cv::imwrite(out_img, _img);
 }
 
-std::ostream& operator<<(std::ostream& os, const LSB_Manip& lm) {
+std::ostream& operator<<(std::ostream& os, const Lsb& lm) {
   return os << lm._str.data();
 }
 
@@ -132,7 +132,7 @@ std::ostream& operator<<(std::ostream& os, const LSB_Manip& lm) {
  * 
  * @return: number of bytes encoded ot decoded
  */
-int LSB_Manip::_mtrx_wkr(std::function<bool(Mtrx_Wkr_Data&, int)> fn) {
+int Lsb::_mtrx_wkr(std::function<bool(Mtrx_Wkr_Data&, int)> fn) {
   Mtrx_Wkr_Data dat{nullptr, 7, 0};
 
   for(int row = 0; row < _img.rows; ++row) {
@@ -151,4 +151,4 @@ int LSB_Manip::_mtrx_wkr(std::function<bool(Mtrx_Wkr_Data&, int)> fn) {
 }
 
 
-} // namespace Steganography 
+} // namespace Lsb 

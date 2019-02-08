@@ -4,12 +4,12 @@ project(Steganography)
 set(CMAKE_CXX_STANDARD 17)
 set(BUILD_SHARED_LIBS true)
 
-set(LIBRARY_NAME LSB_Manipulator)
-set(APP_NAME steg_driver)
+set(LIBRARY_NAME lsb)
+set(APP_NAME driver)
 
 find_package(OpenCV REQUIRED)
 
-add_library(${LIBRARY_NAME} src/LSB_Manip.cpp)
+add_library(${LIBRARY_NAME} src/Lsb.cpp)
 target_link_libraries(${LIBRARY_NAME} ${OpenCV_LIBS})
 
 add_executable(${APP_NAME} app/main.cpp)

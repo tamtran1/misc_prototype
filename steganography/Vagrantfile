@@ -7,7 +7,7 @@ $script = <<SCRIPT	# define $script variable
 	yum-config-manager --enable rhel-server-rhscl-7-rpms
 	yum -y install devtoolset-7 gcc-c++ yum-utils
 
-	echo -e '#!/bin/bash\nscl enable devtoolset-7 bash' > /etc/profile.d/enabledevtoolset-7.sh
+	echo -e '#!/bin/bash\nsource /opt/rh/devtoolset-7/enable' > /etc/profile.d/enabledevtoolset-7.sh
 SCRIPT
 
 Vagrant.configure("2") do |config|
