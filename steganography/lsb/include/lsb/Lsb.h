@@ -21,8 +21,7 @@ namespace Lsb {
  */ 
 struct Mtrx_Wkr_Data {
   unsigned char* row; // pointer to the current row of pixels being work on
-  int bit_idx; // read head to track each bits in a char
-  int nbytes; // number of bytes processed so far
+  unsigned int bits; // bit counter
 };
 
 class Lsb {
@@ -36,7 +35,7 @@ public:
 
 private:
   cv::Mat _img;
-  int _cap; // capacity of chars an image can hold
+  int _img_bits; // capacity of chars an image can hold
   std::vector<char> _str{};
   
   int _mtrx_wkr(std::function<bool(Mtrx_Wkr_Data&, int)> fn);

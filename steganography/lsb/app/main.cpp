@@ -7,9 +7,14 @@
 #include <vector>
 #include <fstream>
 #include <getopt.h>
+#include <bitset>
+#include <sstream>
 
 #include "lsb/Lsb.h"
 #include "lsb/Exception.h"
+#include "common/ColorText.h"
+
+using namespace ColorText;
 
 enum class Op {encode, decode, strip, noop};
 
@@ -94,21 +99,24 @@ int main(int argc, char** argv) {
       case Op::encode: {
         data.seekg(0, data.end);
         int msg_len(data.tellg());
-        std::cout << "message characers: " << msg_len << std::endl;
-        std::cout << "characters encoded: " << lm.encode(data.seekg(0, data.beg)) << std::endl;
+        std::cout << Color::green << "message characers: " << Color::blue << msg_len  << "\n"
+                  << Color::green << "characters encoded: " << Color::blue << lm.encode(data.seekg(0, data.beg))
+                  << Color::reset << std::endl;
         lm.write_img(ofile);
         break;
       } case Op::decode: {
-        std::cout << "characters decoded: " << lm.decode() << std::endl;
-        std::cout << lm;
+        std::cout << Color::green << "characters decoded: " << Color::blue << lm.decode() << "\n"
+                  << Color::green << "message: " << Color::blue << lm
+                  << Color::reset << std::endl;
         break;
       } case Op::strip: {
         int bytes(lm.strip());
         lm.write_img(ofile);
-        std::cout << "Bytes processed: " << bytes << std::endl;
+        std::cout << Color::green << "Bytes processed: " << Color::blue << bytes << "\n"
+                  << Color::reset << std::endl;
         break;
       } case Op::noop: {
-        std::cout << "No operation specified. Nothing to do." << std::endl;
+        std::cout << Bg::red << Color::yellow  << "Operation not specified. Nothing to do." << Color::reset << std::endl;
         break;
       }
     }

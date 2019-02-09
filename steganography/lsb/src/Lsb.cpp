@@ -20,7 +20,7 @@ namespace Lsb {
 /**
  * Description: Constructor reads an input image into a cv::Mat buffer
  */ 
-Lsb::Lsb(const std::string& img_file): _img(cv::imread(img_file)), _cap((_img.total() * _img.elemSize()) / 8) {
+Lsb::Lsb(const std::string& img_file): _img(cv::imread(img_file)), _img_bits(_img.total() * _img.elemSize()) {
   if(_img.empty()) {
     throw Exception("ERROR: Can't read input image file.");
   }
@@ -35,27 +35,26 @@ Lsb::Lsb(const std::string& img_file): _img(cv::imread(img_file)), _cap((_img.to
  * @return number of bytes encoded into image
  */
 int Lsb::encode(std::istream& is) {
-  char c(is.get()); // temp char buffer to work on
+  is.seekg(0, is.end);
+  auto msg_bits(is.tellg() * 8 + 8);
+  is.seekg(0, is.beg);
+  char c(0);
+
+  if(msg_bits + 8 > _img_bits) {
+    throw Exception("ERROR: Message size too big for image. Use a bigger image.");
+  }
 
   return _mtrx_wkr([&, this](Mtrx_Wkr_Data& dat, int color)->bool {
-    if(is.eof() || dat.nbytes == this->_cap - 1 || !((c >> dat.bit_idx) & 1)) {
-      dat.row[color] &= ~1; // if bit is 0 : change LSB of present color value to 0.
-    } else {
-      dat.row[color] |= 1; // if bit is 1 : change LSB of present color value to 1.
+    if(dat.bits % 8 == 0) {
+      is.get(c);
     }
 
-    // if eof and bit_idx is 0, then our message is successfully encoded.
-    if((dat.nbytes == this->_cap - 1 || is.eof()) && dat.bit_idx == 0) {
-      return true; // we use this to break out of all three loops
+    dat.row[color] &= 254;
+    if(dat.bits < msg_bits - 7) {
+      dat.row[color] |= (c & 1 << dat.bits % 8) >> dat.bits % 8;
     }
-
-    if(dat.bit_idx-- == 0) { // advance the read head to work on the next bit
-      dat.bit_idx = 7; // reset read head if all bits are checked, and get the next char to work on
-      ++dat.nbytes; // increment byte count
-      is.get(c); // fetch the next char from file
-    }
-
-    return false; // either end of matrix or end of text file has not reach yet
+    
+    return dat.bits++ == msg_bits;
   });
 }
 
@@ -67,24 +66,15 @@ int Lsb::encode(std::istream& is) {
  * @return: number of bytes decoded from image
  */
 int Lsb::decode() {
-  _str.resize(_cap, 0); // resize _str vector to _img max chars capacity and fill it with zeros
+  _str.resize(_img_bits / 8, 0); // size up _str vector to _img max chars capacity
 
   return _mtrx_wkr([this](Mtrx_Wkr_Data& dat, int color)->bool {
-    if(dat.row[color] & 1) { // manipulate the char bit according to the lsb of the pixel values
-      this->_str[dat.nbytes] |= 1;
+    this->_str[dat.bits / 8] |= (dat.row[color] & 1) << dat.bits++ % 8; // manipulate the char bit according to the lsb of the pixel values
+    if(dat.bits % 8 == 7 && this->_str[dat.bits / 8] == '\0') {
+      _str.resize(dat.bits / 8);
+      return true;
     }
-
-    if(dat.bit_idx-- == 0) {
-      dat.bit_idx = 7; // reset the bits read head
-      if(this->_str[dat.nbytes++] == '\0') {
-        this->_str.resize(dat.nbytes); // resize _str vector to length of message decoded from _img
-        return true;
-      }
-    } else {
-      this->_str[dat.nbytes] <<= 1; // move completed bit over to make room for next bit
-    }
-
-    return false;
+    return (dat.bits % 8 == 7 && this->_str[dat.bits / 8] == '\0');
   });
 }
 
@@ -95,20 +85,9 @@ int Lsb::decode() {
  * @return: bytes processed
  */
 int Lsb::strip() {
-  std::cout << "Stripping least significant bit from image file." << std::endl;
   return _mtrx_wkr([this](Mtrx_Wkr_Data& dat, int color)->bool {
-    dat.row[color] &= ~1; // set every pixels and its color channels lsb to zero
-
-    if(dat.nbytes == this->_cap - 1 && dat.bit_idx == 0) {
-      return true; // we use this to break out of all three loops
-    }
-
-    if(dat.bit_idx-- == 0) {
-      dat.bit_idx = 7; // track bits to count bytes processed
-      ++dat.nbytes; // increment byte count
-    }
-
-    return false;
+    dat.row[color] &= 254; // set every pixels and its color channels lsb to zero
+    return ++dat.bits == _img_bits;
   });
 }
 
@@ -133,19 +112,20 @@ std::ostream& operator<<(std::ostream& os, const Lsb& lm) {
  * @return: number of bytes encoded ot decoded
  */
 int Lsb::_mtrx_wkr(std::function<bool(Mtrx_Wkr_Data&, int)> fn) {
-  Mtrx_Wkr_Data dat{nullptr, 7, 0};
+  Mtrx_Wkr_Data dat{};
 
   for(int row = 0; row < _img.rows; ++row) {
     dat.row = _img.ptr(row);
     for(int col = 0; col < _img.cols; ++col) {
       for(int color = 0; color < 3; ++color) {
         if(fn(dat, color)) {
-          return dat.nbytes;
+          return dat.bits / 8;
         }
       }
       dat.row += 3;
     }
   }
+
 
   throw Exception("ERROR: Matrix operation failed. Cannot parse last byte. Image might be bad.");
 }
